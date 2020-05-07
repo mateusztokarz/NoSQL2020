@@ -1,0 +1,42 @@
+version: '3'
+# it is needed to create network cluster before
+networks:
+    cluster:
+        external:
+            name: cluster
+services:
+    mongo:
+        container_name: "mongo"
+        networks:
+          cluster:
+            ipv4_address: 10.100.100.2
+            aliases:
+              - mongo
+        image: mongo
+    maria:    
+        container_name: "maria"
+        networks:
+          cluster:
+            ipv4_address: 10.100.100.3
+            aliases:
+              - maria                                                                                                                                                    
+        image: mariadb                                                                                                                                                
+        restart: always                                                                                                                                                                                                                                                                              
+        environment:                                                                                                                                                   
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_USER: admin
+          MYSQL_PASSWORD: test                                                                                                    
+          MYSQL_DATABASE: database
+#        ports:                                                                                                                                                                                
+#          - "8881:3306"
+    python:
+        container_name: "python"
+        networks:
+          cluster:
+            ipv4_address: 10.100.100.4
+            aliases:
+              - python
+        image: deb_py
+        volumes:
+            - /home/mateusz/Pulpit/nosql/PY3:/PY3
+        command: tail -f /etc/passwd > /dev/null
